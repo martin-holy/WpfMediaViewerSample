@@ -1,0 +1,109 @@
+﻿<Window x:Class="WpfMediaViewerSample.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfMediaViewerSample"
+        mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Loaded="MainWindow_OnLoaded"
+        Title="MainWindow" Name="MediaWindow" Height="500" Width="1000" Background="#FF252525" WindowState="Maximized">
+  <Window.CommandBindings>
+    <CommandBinding Command="{x:Static local:MainWindow.MoveForward}" Executed="MoveForwardExecuted"/>
+    <CommandBinding Command="{x:Static local:MainWindow.MoveBack}" Executed="MoveBackExecuted"/>
+  </Window.CommandBindings>
+
+  <Window.Resources>
+    <Style x:Key="BoxInfoBorderStyle" TargetType="{x:Type Border}">
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="Black" />
+      <Setter Property="Background" Value="#66000000" />
+      <Setter Property="VerticalAlignment" Value="Top"/>
+      <Setter Property="Margin" Value="5,5,0,0"/>
+      <Setter Property="Padding" Value="2,0,2,1" />
+    </Style>
+    <Style x:Key="BoxInfoStyle" TargetType="{x:Type TextBlock}">
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+
+    <DataTemplate x:Key="ThumbDataTemplate">
+      <Grid>
+        <Image Source="{Binding FilePathCacheUri}" Stretch="Fill" />
+        <ItemsControl x:Name="BoxInfo" ItemsSource="{Binding BoxInfoItems}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Horizontal"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border Style="{StaticResource BoxInfoBorderStyle}">
+                <TextBlock Style="{StaticResource BoxInfoStyle}" Text="{Binding}" />
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Grid>
+    </DataTemplate>
+  </Window.Resources>
+
+  <Grid>
+    <TabControl Background="#FF252525" BorderThickness="0">
+      <TabItem Header="Thumbnails">
+        <ItemsControl x:Name="Thumbs" VirtualizingStackPanel.IsVirtualizing="True" 
+                      VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.CanContentScroll="True">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <VirtualizingStackPanel/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <ItemsControl ItemsSource="{Binding}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border Width="{Binding ThumbWidth}" Height="{Binding ThumbHeight}" BorderThickness="2" BorderBrush="Black" ClipToBounds="True">
+                      <ContentControl Content="{Binding}" ContentTemplate="{StaticResource ThumbDataTemplate}"/>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+          <ItemsControl.Template>
+            <ControlTemplate>
+              <ScrollViewer>
+                <ItemsPresenter />
+              </ScrollViewer>
+            </ControlTemplate>
+          </ItemsControl.Template>
+        </ItemsControl>
+      </TabItem>
+      <TabItem Header="Preview">
+        <Grid>
+          <local:ZoomImageBox x:Name="FullImage" />
+          <MediaElement x:Name="FullMedia" />
+          <ItemsControl x:Name="BoxInfo" ItemsSource="{Binding CurrentMediaItem.BoxInfoItems}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal"/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Style="{StaticResource BoxInfoBorderStyle}">
+                  <TextBlock Style="{StaticResource BoxInfoStyle}" Text="{Binding}" />
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Grid>
+      </TabItem>
+    </TabControl>
+  </Grid>
+</Window>
