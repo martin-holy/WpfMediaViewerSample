@@ -8,10 +8,6 @@
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Loaded="MainWindow_OnLoaded"
         Title="MainWindow" Name="MediaWindow" Height="500" Width="1000" Background="#FF252525" WindowState="Maximized">
-  <Window.CommandBindings>
-    <CommandBinding Command="{x:Static local:MainWindow.MoveForward}" Executed="MoveForwardExecuted"/>
-    <CommandBinding Command="{x:Static local:MainWindow.MoveBack}" Executed="MoveBackExecuted"/>
-  </Window.CommandBindings>
 
   <Window.Resources>
     <Style x:Key="BoxInfoBorderStyle" TargetType="{x:Type Border}">
@@ -28,7 +24,7 @@
 
     <DataTemplate x:Key="ThumbDataTemplate">
       <Grid>
-        <Image Source="{Binding FilePathCacheUri}" Stretch="Fill" />
+        <Image Source="{Binding FakeSource}" Stretch="Fill" />
         <ItemsControl x:Name="BoxInfo" ItemsSource="{Binding BoxInfoItems}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
@@ -67,7 +63,17 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <Border Width="{Binding ThumbWidth}" Height="{Binding ThumbHeight}" BorderThickness="2" BorderBrush="Black" ClipToBounds="True">
+                    <Border Width="{Binding ThumbWidth}" Height="{Binding ThumbHeight}" 
+                            BorderThickness="2" BorderBrush="Black" ClipToBounds="True">
+                      <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                          <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                              <Setter Property="Border.BorderBrush" Value="Blue" />
+                            </Trigger>
+                          </Style.Triggers>
+                        </Style>
+                      </Border.Style>
                       <ContentControl Content="{Binding}" ContentTemplate="{StaticResource ThumbDataTemplate}"/>
                     </Border>
                   </DataTemplate>
@@ -85,6 +91,10 @@
         </ItemsControl>
       </TabItem>
       <TabItem Header="Preview">
+        <TabItem.CommandBindings>
+          <CommandBinding Command="{x:Static local:MainWindow.MoveForward}" Executed="MoveForwardExecuted"/>
+          <CommandBinding Command="{x:Static local:MainWindow.MoveBack}" Executed="MoveBackExecuted"/>
+        </TabItem.CommandBindings>
         <Grid>
           <local:ZoomImageBox x:Name="FullImage" />
           <MediaElement x:Name="FullMedia" />

@@ -78,21 +78,21 @@ namespace WpfMediaViewerSample {
       MediaItems.Clear();
       var random = new Random();
 
-      foreach (var filePath in Directory.EnumerateFiles(@"d:\Pictures\01 Digital_Foto\-=Hotovo\2016\", "*.*", SearchOption.AllDirectories)) {
+      /*foreach (var filePath in Directory.EnumerateFiles(@"d:\Pictures\01 Digital_Foto\-=Hotovo\2016\", "*.*", SearchOption.AllDirectories)) {
         var size = sizes[random.Next(sizes.Count)];
         MediaItems.Add(new BaseMediaItem(filePath) {
           ThumbWidth = (int)size.X,
           ThumbHeight = (int)size.Y
         });
-      }
+      }*/
 
-      /*for (var i = 0; i < 5000; i++) {
+      for (var i = 0; i < 5000; i++) {
         var size = sizes[random.Next(sizes.Count)];
         MediaItems.Add(new BaseMediaItem($"Item {i}") {
           ThumbWidth = (int)size.X,
           ThumbHeight = (int)size.Y
         });
-      }*/
+      }
       
       _mediaItemsCount = MediaItems.Count;
     }
@@ -101,6 +101,7 @@ namespace WpfMediaViewerSample {
       foreach (var itemsGroup in SplitedMediaItems) {
         itemsGroup.Clear();
       }
+
       SplitedMediaItems.Clear();
 
       var groupMaxWidth = Thumbs.ActualWidth;
@@ -115,9 +116,12 @@ namespace WpfMediaViewerSample {
         else {
           SplitedMediaItems.Add(row);
           row = new List<BaseMediaItem>();
-          groupWidth = 0;
+          row.Add(item);
+          groupWidth = item.ThumbWidth + itemOffset;
         }
       }
+
+      SplitedMediaItems.Add(row);
     }
 
     private void MoveForwardExecuted(object sender, ExecutedRoutedEventArgs e) {
@@ -128,14 +132,6 @@ namespace WpfMediaViewerSample {
     private void MoveBackExecuted(object sender, ExecutedRoutedEventArgs e) {
       if (_mediaItemIndex <= 0) return;
       MediaItemIndex--;
-    }
-
-    protected bool IsFullyOrPartiallyVisible(FrameworkElement child, FrameworkElement scrollViewer) {
-      var childTransform = child.TransformToAncestor(scrollViewer);
-      var childRectangle = childTransform.TransformBounds(
-        new Rect(new Point(0, 0), child.RenderSize));
-      var ownerRectangle = new Rect(new Point(0, 0), scrollViewer.RenderSize);
-      return ownerRectangle.IntersectsWith(childRectangle);
     }
   }
 }
